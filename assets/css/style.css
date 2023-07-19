@@ -1,3 +1,6 @@
 #toDoInput{
     width: 100%;
 }
+#toDoList .edit, #toDoList .delete{
+    cursor: pointer;
+}
