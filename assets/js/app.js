@@ -11,21 +11,28 @@ let editId=eve.getAttribute("data-id")
 let editObj=skillArr.find((obj)=>{
   return ( obj.uuid===editId)
 })
-localStorage.setItem("editId", editId)
+localStorage.setItem("editObj", JSON.stringify(editObj))
 toDoInput.value=editObj.skillName;
 addBtn.classList.add("d-none")
 updateBtn.classList.remove("d-none")
 }
 const onUpdate=(eve)=>{
   let updatedValue=toDoInput.value
-  let updateId=localStorage.getItem("editId")
+  let editedObj=JSON.parse(localStorage.getItem("editObj"))
   skillArr.forEach(obj=>{
-    if(obj.uuid === updateId){
+    if(obj.uuid === editedObj.uuid){
       obj.skillName=updatedValue
     }
   })
   localStorage.setItem("skillArr", JSON.stringify(skillArr))
-  templating(skillArr)
+ 
+  document.getElementById(editedObj.uuid).firstElementChild.innerHTML=updatedValue
+  //templating(skillArr)
+  Swal.fire({
+    icon: 'success',
+    text: `${editedObj.skillName} is updated as ${updatedValue}`,
+    timer:3000
+  })
   toDoForm.reset()
   addBtn.classList.remove("d-none")
 updateBtn.classList.add("d-none")
@@ -34,14 +41,27 @@ updateBtn.addEventListener("click", onUpdate)
 
 const onDelete=(eve)=>{
   let deleteId=eve.getAttribute("data-id")
-  skillArr=skillArr.filter(obj=> obj.uuid != deleteId)
-  localStorage.setItem("skillArr", JSON.stringify(skillArr))
-  templating(skillArr)
+  if (confirm("Are you sure")) {
+    skillArr=skillArr.filter(obj=> obj.uuid != deleteId)
+    localStorage.setItem("skillArr", JSON.stringify(skillArr))
+    //templating(skillArr)
+    let deletedItem=document.getElementById(deleteId).firstElementChild.innerHTML
+    document.getElementById(deleteId).remove()
+    Swal.fire({
+      icon: 'success',
+      text: `${deletedItem} item successfully deleted`,
+      timer:3000
+    })
+  } else {
+    return false;
+  }
+
+    
 }
 const templating=(arr)=>{
     let result=``;
     arr.forEach(obj=>{
-        result +=` <li class="list-group-item toDoItem font-weight-bold text-uppercase d-flex justify-content-between">
+        result +=` <li id="${obj.uuid}" class="list-group-item toDoItem font-weight-bold text-uppercase d-flex justify-content-between">
         <span>${obj.skillName}</span>
         <span>
           <i class="fa-solid fa-pen-to-square edit" onclick="onEdit(this)" data-id="${obj.uuid}"></i>
@@ -65,9 +85,23 @@ const onSubmitAdd=(eve)=>{
         skillName:skill,
         uuid:uuidv4()
     }
-    skillArr.push(obj)
+    skillArr.unshift(obj)
     localStorage.setItem("skillArr", JSON.stringify(skillArr))
-   templating(skillArr)
+    let li=document.createElement("li")
+    li.setAttribute("id",obj.uuid)
+    li.className="list-group-item toDoItem font-weight-bold text-uppercase d-flex justify-content-between"
+    li.innerHTML=` <span>${obj.skillName}</span>
+    <span>
+      <i class="fa-solid fa-pen-to-square edit" onclick="onEdit(this)" data-id="${obj.uuid}"></i>
+      <i class="fa-solid fa-trash-can delete ml-2 "onclick="onDelete(this)" data-id="${obj.uuid}"></i>
+    </span>`
+    toDoList.prepend(li)
+    Swal.fire({
+      icon: 'success',
+      text: `${skill} item successfully added to list`,
+      timer:3000
+    })
+   //templating(skillArr)
     toDoForm.reset()
 }
 
