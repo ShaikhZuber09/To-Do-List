@@ -30,7 +30,7 @@ const onUpdate=(eve)=>{
   //templating(skillArr)
   Swal.fire({
     icon: 'success',
-    text: `${editedObj.skillName} is updated as ${updatedValue}`,
+    text: `${editedObj.skillName.toUpperCase()} is updated as ${updatedValue.toUpperCase()}`,
     timer:3000
   })
   toDoForm.reset()
@@ -49,7 +49,7 @@ const onDelete=(eve)=>{
     document.getElementById(deleteId).remove()
     Swal.fire({
       icon: 'success',
-      text: `${deletedItem} item successfully deleted`,
+      text: `${deletedItem.toUpperCase()} item successfully deleted`,
       timer:3000
     })
   } else {
@@ -98,7 +98,7 @@ const onSubmitAdd=(eve)=>{
     toDoList.prepend(li)
     Swal.fire({
       icon: 'success',
-      text: `${skill} item successfully added to list`,
+      text: `${skill.toUpperCase()} item successfully added to list`,
       timer:3000
     })
    //templating(skillArr)
